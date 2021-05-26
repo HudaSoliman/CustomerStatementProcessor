@@ -3,7 +3,12 @@ package com.cognizant.processor.model.dao;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
+import org.apache.commons.validator.routines.IBANValidator;
+
+import com.cognizant.processor.model.validator.AccountNumberConstraint;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import lombok.Data;
@@ -17,11 +22,15 @@ public class Transaction {
 
 	@Id
 	private  Long reference;
-	// TODO: add IBANValidator
+	@AccountNumberConstraint
 	private  String accountNumber;
+	@NotBlank(message = "Invalid empty balance")
+	@Positive
 	private  Double startBalance;
+	@NotBlank
 	private  Double mutation;
 	private  String description;
+	@NotBlank
 	private  Double endBalance;
 
 
@@ -41,5 +50,13 @@ public class Transaction {
 		int result = ((Double) (getStartBalance() + getMutation())).compareTo(getEndBalance());
 		return result == 0;
 	}
+	
+	public boolean isAccountNumber() {
+		IBANValidator.getInstance().isValid(accountNumber);
+		int result = ((Double) (getStartBalance() + getMutation())).compareTo(getEndBalance());
+		return result == 0;
+	}
+	
+	
 
 }
