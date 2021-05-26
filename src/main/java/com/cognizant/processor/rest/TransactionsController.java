@@ -23,7 +23,7 @@ import com.cognizant.processor.service.transaction.TransactionService;
 @RestController
 @ExposesResourceFor(Transaction.class)
 @RequestMapping("/api/transactions")
-public class CustomerStatementProcessorController {
+public class TransactionsController {
 
 	@Autowired
 	TransactionService transactionService;

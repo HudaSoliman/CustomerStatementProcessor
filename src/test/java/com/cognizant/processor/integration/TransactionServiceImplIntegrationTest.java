@@ -15,14 +15,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.cognizant.processor.model.dao.Account;
 import com.cognizant.processor.model.dao.Transaction;
 import com.cognizant.processor.model.dto.ErrorTransactionData;
-import com.cognizant.processor.model.dto.ProcessedTransactions;
 import com.cognizant.processor.model.dto.ProccessingResultType;
-import com.cognizant.processor.repository.AccountRepository;
+import com.cognizant.processor.model.dto.ProcessedTransactions;
 import com.cognizant.processor.repository.TransactionRepository;
-import com.cognizant.processor.service.account.AccountService;
 import com.cognizant.processor.service.transaction.TransactionService;
 import com.cognizant.processor.service.transaction.TransactionServiceImpl;
 
@@ -42,17 +39,11 @@ public class TransactionServiceImplIntegrationTest {
 	private TransactionService transactionService;
 
 	@MockBean
-	private AccountService accountService;
-	@MockBean
-	private AccountRepository accountRepository;
-
-	@MockBean
 	private TransactionRepository transactionRepository;
 
 	@Before
 	public void setUp() {
-		Account alex = new Account("NL93ABNA0585619023", 100L);
-		Transaction alexTransaction = new Transaction(147674L, alex.getAccountNumber(), 100D, -8D, "testing", 92D);
+		Transaction alexTransaction = new Transaction(147674L, "NL93ABNA0585619023", 100D, -8D, "testing", 92D);
 
 		Mockito.doReturn(Optional.of(alexTransaction)).when(transactionRepository).findByReference(147674L);
 	}

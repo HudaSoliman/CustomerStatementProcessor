@@ -36,22 +36,13 @@ public class TransactionServiceImpl implements TransactionService {
 	public ProcessedTransactions processTransactions(List<Transaction> inputTransactions) {
 		ProcessedTransactions result = new ProcessedTransactions();
 		// get transactions with invalid balance
-		List<Transaction> invalidBalanceTransactions = inputTransactions.stream().filter(t -> !t.isValidBalance())
-				.collect(Collectors.toList());
+		List<Transaction> invalidBalanceTransactions = getInvalidTransactions(inputTransactions);
 
-		// get transactions with duplicate within the given list
-		Set<Transaction> duplicateTransactions = findDuplicatesWithinList(inputTransactions);
-
-		// find duplicates of transactions with the database
-		Set<Transaction> duplicateTransactionsWithDatabase = inputTransactions.stream()
-				.filter(this::isExistingTransaction).collect(Collectors.toSet());
-
-		duplicateTransactions.addAll(duplicateTransactionsWithDatabase);
+		Set<Transaction> duplicateTransactions = getDuplicateTransactions(inputTransactions);
 
 		if (invalidBalanceTransactions.isEmpty() && duplicateTransactions.isEmpty()) {
 
 			result.setResultType(ProccessingResultType.SUCCESSFUL);
-
 			// save transactions..
 			inputTransactions.stream().forEach(transactionRepository::save);
 
@@ -74,6 +65,23 @@ public class TransactionServiceImpl implements TransactionService {
 
 	}
 
+	private List<Transaction> getInvalidTransactions(List<Transaction> inputTransactions) {
+		return inputTransactions.stream().filter(t -> !t.isValidBalance()).collect(Collectors.toList());
+	}
+
+	private Set<Transaction> getDuplicateTransactions(List<Transaction> inputTransactions) {
+		// get transactions with duplicate within the given list
+		Set<Transaction> duplicateTransactions = findDuplicatesWithinList(inputTransactions);
+
+		// find duplicates of transactions with the database
+		Set<Transaction> duplicateTransactionsWithDatabase = inputTransactions.stream()
+				.filter(this::isExistingTransaction).collect(Collectors.toSet());
+
+		duplicateTransactions.addAll(duplicateTransactionsWithDatabase);
+
+		return duplicateTransactions;
+
+	}
 
 	private boolean isExistingTransaction(Transaction transaction) {
 		Transaction t = this.findByReferenceNumber(transaction.getReference());
