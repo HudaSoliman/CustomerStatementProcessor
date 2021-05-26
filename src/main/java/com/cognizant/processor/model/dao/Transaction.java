@@ -17,6 +17,7 @@ public class Transaction {
 
 	@Id
 	private  Long reference;
+	// TODO: add IBANValidator
 	private  String accountNumber;
 	private  Double startBalance;
 	private  Double mutation;

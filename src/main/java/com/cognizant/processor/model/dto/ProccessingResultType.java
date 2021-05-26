@@ -1,6 +1,6 @@
 package com.cognizant.processor.model.dto;
 
-public enum ValidationResultType {
+public enum ProccessingResultType {
 
 	SUCCESSFUL,
 	DUPLICATE_REFERENCE,

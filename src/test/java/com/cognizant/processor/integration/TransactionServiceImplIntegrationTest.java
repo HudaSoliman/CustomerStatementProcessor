@@ -18,8 +18,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.cognizant.processor.model.dao.Account;
 import com.cognizant.processor.model.dao.Transaction;
 import com.cognizant.processor.model.dto.ErrorTransactionData;
-import com.cognizant.processor.model.dto.ValidatedTransactions;
-import com.cognizant.processor.model.dto.ValidationResultType;
+import com.cognizant.processor.model.dto.ProcessedTransactions;
+import com.cognizant.processor.model.dto.ProccessingResultType;
 import com.cognizant.processor.repository.AccountRepository;
 import com.cognizant.processor.repository.TransactionRepository;
 import com.cognizant.processor.service.account.AccountService;
@@ -74,8 +74,8 @@ public class TransactionServiceImplIntegrationTest {
 		transactions.add(transaction1);
 		transactions.add(transaction2);
 
-		ValidatedTransactions result = transactionService.processTransactions(transactions);
-		Assert.assertEquals(ValidationResultType.SUCCESSFUL, result.getResultType());
+		ProcessedTransactions result = transactionService.processTransactions(transactions);
+		Assert.assertEquals(ProccessingResultType.SUCCESSFUL, result.getResultType());
 		Assert.assertTrue(result.getErrorRecords().isEmpty());
 	}
 
@@ -89,8 +89,8 @@ public class TransactionServiceImplIntegrationTest {
 		transactions.add(transaction1);
 		transactions.add(transaction2);
 
-		ValidatedTransactions result = transactionService.processTransactions(transactions);
-		Assert.assertEquals(ValidationResultType.DUPLICATE_REFERENCE, result.getResultType());
+		ProcessedTransactions result = transactionService.processTransactions(transactions);
+		Assert.assertEquals(ProccessingResultType.DUPLICATE_REFERENCE, result.getResultType());
 		Assert.assertEquals(1, result.getErrorRecords().size());
 
 		List<ErrorTransactionData> expectedResults = new ArrayList<>();
@@ -109,8 +109,8 @@ public class TransactionServiceImplIntegrationTest {
 		transactions.add(transaction1);
 		transactions.add(transaction2);
 
-		ValidatedTransactions result = transactionService.processTransactions(transactions);
-		Assert.assertEquals(ValidationResultType.INCORRECT_END_BALANCE, result.getResultType());
+		ProcessedTransactions result = transactionService.processTransactions(transactions);
+		Assert.assertEquals(ProccessingResultType.INCORRECT_END_BALANCE, result.getResultType());
 		Assert.assertEquals(1, result.getErrorRecords().size());
 
 		List<ErrorTransactionData> expectedResults = new ArrayList<>();
@@ -131,8 +131,8 @@ public class TransactionServiceImplIntegrationTest {
 		transactions.add(transaction2);
 		transactions.add(transaction3);
 
-		ValidatedTransactions result = transactionService.processTransactions(transactions);
-		Assert.assertEquals(ValidationResultType.DUPLICATE_REFERENCE_INCORRECT_END_BALANCE, result.getResultType());
+		ProcessedTransactions result = transactionService.processTransactions(transactions);
+		Assert.assertEquals(ProccessingResultType.DUPLICATE_REFERENCE_INCORRECT_END_BALANCE, result.getResultType());
 		Assert.assertEquals(2, result.getErrorRecords().size());
 
 		List<ErrorTransactionData> expectedResults = new ArrayList<>();

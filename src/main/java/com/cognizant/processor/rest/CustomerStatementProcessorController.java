@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cognizant.processor.model.dao.Transaction;
-import com.cognizant.processor.model.dto.ValidatedTransactions;
-import com.cognizant.processor.model.dto.ValidationResultType;
+import com.cognizant.processor.model.dto.ProcessedTransactions;
+import com.cognizant.processor.model.dto.ProccessingResultType;
 import com.cognizant.processor.service.transaction.TransactionService;
 
 @RestController
@@ -30,20 +30,20 @@ public class CustomerStatementProcessorController {
 
 	@Transactional
 	@PostMapping(path = "/process", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ValidatedTransactions> processData(@RequestBody List<Transaction> inputTransactions) {
+	public ResponseEntity<ProcessedTransactions> processData(@RequestBody List<Transaction> inputTransactions) {
 
 		try {
-			ValidatedTransactions result = transactionService.processTransactions(inputTransactions);
+			ProcessedTransactions result = transactionService.processTransactions(inputTransactions);
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} catch (Exception e) {
-			ValidatedTransactions result = new ValidatedTransactions(ValidationResultType.INTERNAL_SERVER_ERROR);
+			ProcessedTransactions result = new ProcessedTransactions(ProccessingResultType.INTERNAL_SERVER_ERROR);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 		}
 	}
 
 	@ExceptionHandler
-	public ResponseEntity<ValidatedTransactions> handle(HttpMessageConversionException e) {
-		ValidatedTransactions result = new ValidatedTransactions(ValidationResultType.BAD_REQUEST);
+	public ResponseEntity<ProcessedTransactions> handle(HttpMessageConversionException e) {
+		ProcessedTransactions result = new ProcessedTransactions(ProccessingResultType.BAD_REQUEST);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 	}
 	

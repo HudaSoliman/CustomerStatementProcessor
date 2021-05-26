@@ -10,16 +10,16 @@ import com.cognizant.processor.model.dao.Transaction;
 import lombok.Data;
 
 @Data
-public class ValidatedTransactions {
+public class ProcessedTransactions {
 
-	private ValidationResultType resultType;
+	private ProccessingResultType resultType;
 	private List<ErrorTransactionData> errorRecords;
 
-	public ValidatedTransactions() {
+	public ProcessedTransactions() {
 		this.errorRecords = new ArrayList<>();
 	}
 
-	public ValidatedTransactions(ValidationResultType resultType) {
+	public ProcessedTransactions(ProccessingResultType resultType) {
 		this();
 		this.resultType = resultType;
 	}

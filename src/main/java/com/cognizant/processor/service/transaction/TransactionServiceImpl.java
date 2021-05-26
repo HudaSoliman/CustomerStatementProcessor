@@ -11,21 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cognizant.processor.model.dao.Account;
 import com.cognizant.processor.model.dao.Transaction;
-import com.cognizant.processor.model.dto.ValidatedTransactions;
-import com.cognizant.processor.model.dto.ValidationResultType;
+import com.cognizant.processor.model.dto.ProccessingResultType;
+import com.cognizant.processor.model.dto.ProcessedTransactions;
 import com.cognizant.processor.repository.TransactionRepository;
-import com.cognizant.processor.service.account.AccountService;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
 	@Autowired
 	TransactionRepository transactionRepository;
-
-	@Autowired
-	AccountService accountService;
 
 	@Override
 	public Transaction findByReferenceNumber(Long reference) {
@@ -38,8 +33,8 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Transactional
 	@Override
-	public ValidatedTransactions processTransactions(List<Transaction> inputTransactions) {
-		ValidatedTransactions result = new ValidatedTransactions();
+	public ProcessedTransactions processTransactions(List<Transaction> inputTransactions) {
+		ProcessedTransactions result = new ProcessedTransactions();
 		// get transactions with invalid balance
 		List<Transaction> invalidBalanceTransactions = inputTransactions.stream().filter(t -> !t.isValidBalance())
 				.collect(Collectors.toList());
@@ -55,22 +50,22 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (invalidBalanceTransactions.isEmpty() && duplicateTransactions.isEmpty()) {
 
-			result.setResultType(ValidationResultType.SUCCESSFUL);
+			result.setResultType(ProccessingResultType.SUCCESSFUL);
 
 			// save transactions..
-			inputTransactions.stream().forEach(this::saveTransaction);
+			inputTransactions.stream().forEach(transactionRepository::save);
 
 		} else if (invalidBalanceTransactions.isEmpty() && !duplicateTransactions.isEmpty()) {
 
-			result.setResultType(ValidationResultType.DUPLICATE_REFERENCE);
+			result.setResultType(ProccessingResultType.DUPLICATE_REFERENCE);
 			result.addErrorRecords(duplicateTransactions);
 		} else if (!invalidBalanceTransactions.isEmpty() && duplicateTransactions.isEmpty()) {
 
-			result.setResultType(ValidationResultType.INCORRECT_END_BALANCE);
+			result.setResultType(ProccessingResultType.INCORRECT_END_BALANCE);
 			result.addErrorRecords(invalidBalanceTransactions);
 		} else if (!invalidBalanceTransactions.isEmpty() && !duplicateTransactions.isEmpty()) {
 
-			result.setResultType(ValidationResultType.DUPLICATE_REFERENCE_INCORRECT_END_BALANCE);
+			result.setResultType(ProccessingResultType.DUPLICATE_REFERENCE_INCORRECT_END_BALANCE);
 			result.addErrorRecords(invalidBalanceTransactions);
 			result.addErrorRecords(duplicateTransactions);
 		}
@@ -79,22 +74,6 @@ public class TransactionServiceImpl implements TransactionService {
 
 	}
 
-	private void saveTransaction(Transaction t) {
-		// saving account first..
-		String accountNumber = t.getAccountNumber();
-		Account account = accountService.findByAccountNumber(accountNumber);
-
-		if (Objects.isNull(account)) {
-			account = new Account(accountNumber, t.getEndBalance());
-		} else {
-			account.setBalance(t.getEndBalance());
-		}
-		accountService.save(account);
-
-		// saving transaction
-		transactionRepository.save(t);
-
-	}
 
 	private boolean isExistingTransaction(Transaction transaction) {
 		Transaction t = this.findByReferenceNumber(transaction.getReference());
