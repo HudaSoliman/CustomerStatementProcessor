@@ -1,0 +1,26 @@
+[
+   {
+      "reference": "130498",
+      "accountNumber": "NL69ABNA0433647324",
+      "description": "Tickets for Peter Theuß",
+      "startBalance": "26.9",
+      "mutation": "-18.78",
+      "endBalance": "8.12"
+   },
+   {
+      "reference": "147674",
+      "accountNumber": "NL93ABNA0585619023",
+      "description": "Subscription from Peter Dekker",
+      "startBalance": "74.69",
+      "mutation": "-44.91",
+      "endBalance": "29.78"
+   },
+   {
+      "reference": "135607",
+      "accountNumber": "NL27SNSB0917829871",
+      "description": "Subscription from Peter Theuß",
+      "startBalance": "70.42",
+      "mutation": "+34.42",
+      "endBalance": "104.84"
+   }
+]
